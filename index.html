@@ -1,0 +1,235 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <meta charset="utf-8" />
+    <style>
+        body {
+            background:url(img/sixties.png) fixed;
+            background-size:100%;
+        }
+        * {
+            font-family: "Roboto", sans-serif;
+            color: #f0f0f0;
+            text-shadow:#0f0f0f 2px 2px;
+            
+        }
+        form input {
+            text-shadow: none;
+            border: solid 5px #e5562b;
+            border-radius: 10px;
+            background-color: #ffecf2;
+            color:black;
+        }
+        h1, h2 {
+            
+            text-align: center;
+        }
+        .form {
+            background: url(img/sixties_form.png);
+            font-size: 1.3em;
+            display: inline-block;
+            background-color: #a775d2;
+            border: solid 15px #e5562b;
+            border-radius: 20%;
+            text-align: center;
+            padding: 40px;
+            margin: auto;
+            transition: all 0.5s ease-in;
+        }
+        .trans-form {
+            border: solid 20px #6B8E23;
+            transition: all 0.5s ease-out;
+            transform-origin: center;
+        }
+
+
+        .button {
+            display: inline-grid;
+            align-items: center;
+            width: 180px;
+            height: 52.5px;
+            background-color: rgb(173,108,81);
+            color: white;
+            border: solid 5px #e5562b;
+            border-radius: 10px;
+            margin:1vw;
+            text-align: center;
+            text-decoration: none;
+            font-size: 19px;
+            justify-content: center;
+            transition: all 0.3s ease-in;
+        }
+        .button:hover{
+            background-color:#e5562b;
+            border-color:#c3a61e;
+            border-radius:13px;
+            transform-origin:center;
+        }
+        .center {
+            display: flex;
+            justify-content: center;
+        }
+        .appointment {
+            display:inline-block;
+            background: url(img/sixties_form.png);
+            min-width:300px;
+            width:33vw;
+            max-width:700px;
+            min-height:200px;
+            height:30vw;
+            max-height:500px;
+            background-color: #b06f8f;
+            border: solid 15px #f56c28;
+            border-radius: 20%;
+            text-align: center;
+            padding: 10px;
+            margin: 10px;
+            transition: all 0.6s ease-in;
+        }
+        .fade-out{
+            transform:rotate3d(1,1,0,90deg);
+        }
+        hr {
+            height: 4px;
+            background-color: #ffecf2;
+            border-radius:20px;
+        }
+
+    </style>
+    <title>Prenotazioni</title>
+</head>
+
+<body>
+    <h1>Prenotazioni</h1>
+    <div class="center">
+        <form id="form" class="form">
+            <label for="name">Nome:</label><br />
+            <input required type="text" id="name" onclick="removeClass()"/><br />
+            <label for="surname">Cognome:</label><br />
+            <input required type="text" id="surname" /><br />
+            <label for="password">Codice identificativo (di sua scelta): </label><br />
+            <input type="text" id="password" /><br />
+            <label for="email">Indirizzo di posta elettronica:</label><br />
+            <input required type="email" id="email" /><br />
+            <label for="date">Data:</label><br />
+            <input required id="date" type="datetime-local" /><br />
+            <button type="button" class="button" id="conferma" onclick="addAppointment()">Conferma prenotazione</button>
+        </form>
+    </div>
+    <hr />
+    <button type="button" class="button center" onclick="showAppointments()">Mostra appuntamenti</button>
+    
+    <div id="appointments"></div>
+    <p id="prova"></p>
+
+
+
+    <script>
+
+        let appointments = [];
+        let appointment = {};
+        //creazione oggetto appointment e aggiunta all'array appointments
+        function addAppointment() {
+            appointment = {};
+            appointment.name = document.getElementById("name").value;
+            appointment.surname = document.getElementById("surname").value;
+            appointment.email = document.getElementById("email").value;
+            appointment.date = document.getElementById("date").value;
+            appointment.password = document.getElementById("password").value;
+
+            //gestione dell'orario
+            let day = new Date(document.getElementById("date").value).getDate();
+            let month = new Date(document.getElementById("date").value).getMonth() + 1;
+            let year = new Date(document.getElementById("date").value).getFullYear();
+            let hour = new Date(document.getElementById("date").value).getHours();
+            let minute = new Date(document.getElementById("date").value).getMinutes();
+            appointment.date = ((day < 10) ? "0" : "") + day + "/" + ((month < 10) ? "0" : "") + month + "/" + year + " - " + ((hour < 10) ? "0" : "") + hour + ":" + ((minute < 10) ? "0" : "") + minute;
+            let now = new Date;
+            //valore dell'appuntamento in millisecondi per gestire la validità dell'ora e mettere in ordine gli appuntamenti
+            appointment.milliseconds = new Date(document.getElementById("date").value);
+
+            if (appointment.name === "" || appointment.surname === "" || appointment.email === "" || appointment.date === "" || appointment.password==="") {
+                alert("Si assicuri di compilare tutti i campi")
+            }
+            else if (appointment.milliseconds.getTime() <= now.getTime()) {
+                alert("Non può prenotare un appuntamento nel passato!")
+            }
+            
+            else {
+                appointment.date = ((day < 10) ? "0" : "") + day + "/" + ((month < 10) ? "0" : "") + month + "/" + year + " - " + ((hour < 10) ? "0" : "") + hour + ":" + ((minute < 10) ? "0" : "") + minute;
+                appointments.push(appointment);
+                document.getElementById("name").value = "";
+                document.getElementById("surname").value = "";
+                document.getElementById("date").value = "";
+                document.getElementById("email").value = "";
+                document.getElementById("password").value = "";
+                document.getElementById("form").classList.add("trans-form");
+                setTimeout(function () {
+                    document.getElementById("form").classList.remove("trans-form")
+                }, 1000);
+            };
+            
+        };
+        function removeClass() {
+            let form = document.getElementById("form");
+            form.classList.remove("trans-form");
+        }
+        
+            
+            
+        
+
+        //visualizzazione degli appuntamenti con possibilità di rimozione
+        function showAppointments() {
+            let i = 1; //contatore per la numerazione degli appuntamenti
+            let div_appointments = document.getElementById("appointments");
+            div_appointments.innerHTML = "";
+            //le date vengono messe in ordine cronologico
+            appointments.sort(function (date1, date2) {
+                return date1.milliseconds - date2.milliseconds;
+            });
+            appointments.forEach(function (appointment,index) {
+                //contenitore del singolo appuntamento
+                let div_appointment = document.createElement("div");
+                div_appointment.className = "appointment";
+                div_appointment.innerHTML = "<h3>Appuntamento " + i + "</h3>Cognome: " + appointment.surname + " <br>Nome: " + appointment.name + " <br> E-mail: " + appointment.email + "<br> Data: " + appointment.date+"<br>";
+                i++;
+                let remove_button = document.createElement("button");
+                remove_button.className= "button";
+                remove_button.textContent = "Rimuovi appuntamento";
+                remove_button.onclick = function () {
+                    removeAppointment(index, div_appointment, appointment.password)
+                };
+                div_appointments.appendChild(div_appointment);
+                div_appointment.appendChild(remove_button);
+                
+            });
+        };
+
+        //rimozione appuntamenti
+        function removeAppointment(index, div_element,password) {
+        
+        
+            let check = prompt("Inserisca il suo codice identificativo: ");
+            if (check == password) {
+                div_element.classList.add("fade-out");
+                setTimeout(function () {
+                    appointments.splice(index, 1);
+                    showAppointments();
+                }, 700)
+            }
+            else {
+                alert("Inserisca il suo codice identificativo corretto");
+            }
+
+        };
+
+        
+        
+
+    </script>
+</body>
+</html >
