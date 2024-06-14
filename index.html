@@ -151,7 +151,7 @@
             //valore dell'appuntamento in millisecondi per gestire la validità dell'ora e mettere in ordine gli appuntamenti
             appointment.milliseconds = new Date(document.getElementById("date").value);
 
-            if (appointment.name === "" || appointment.surname === "" || appointment.email === "" || appointment.date === "" || appointment.password==="") {
+            if (appointment.name === "" || appointment.surname === "" || appointment.email === "" || appointment.date === "NaN/NaN/NaN - NaN:NaN" || appointment.password==="") {
                 alert("Si assicuri di compilare tutti i campi")
             }
             else if (appointment.milliseconds.getTime() <= now.getTime()) {
